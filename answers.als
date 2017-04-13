@@ -240,8 +240,17 @@ pred addReg[c,c':Course,s:Student] {
 //  ----------
 //  Write an operation to input and record a mark for a student
 //
-pred recordMark
 
+pred recordMark[c,c':Course, s:Student, m:Mark] {
+    (c.reg & s) != none // student has to be reg'd
+
+    // NB: This disallows updating a mark, question suggests
+    //     we're adding a mark entry: "input [...] a mark"
+    (c.result)[s] = none // student has no mark already
+    c'.reg = c.reg // students registered shouldn't change
+
+    c'.result = c.result + s -> m // new entry for this result is union'd
+}
 
 //
 /////////////////////////////////////////////////////////////////////////////////
