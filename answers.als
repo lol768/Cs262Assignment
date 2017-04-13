@@ -162,14 +162,11 @@ sig Course {
     reg : set Student, 
     alloc : Student -> Tutor, 
     result : Student -> Mark 
-   } 
-
+}
 
 pred inv [c:Course] { 
     inva[c] && invb[c]
-   }
-
-
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
