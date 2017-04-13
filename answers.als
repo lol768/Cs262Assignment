@@ -177,6 +177,13 @@ pred inv [c:Course] {
 //  Write the "invb" predicate for the remaining 2 requirements of the invariant.    
 //
 
+pred invb[c:Course] {
+    // (1) Only registered students can have a result
+    c.reg <: c.result = c.result
+
+    // (2) No student can have more than one mark for a course
+    all s:(c.reg) | lone c.result[s]
+}
 
 //
 /////////////////////////////////////////////////////////////////////////////////
