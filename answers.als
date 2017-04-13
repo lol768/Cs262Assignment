@@ -306,8 +306,22 @@ fun scores[s:Student] : Course -> Mark {
 //  not yet have a mark. 
 //
 
-fun findtutors
+fun findtutors[c:Course] : set Tutor {
+    // set of tutors responsible for >= 1 students:
+    // * registered for c
+    // * don't have a mark
 
+    // tutors where...
+    {t:Tutor |
+        #( // the cardinality of intersection of..
+            // students responsible for and
+            (c.alloc).t & {s:Student |
+                // students with no mark that are reg'd
+                !(s in (c.result).Mark) && s in c.reg
+            }
+         ) >= 1 // is greater than or equal to 1
+    }
+}
 
 //
 //////////////////////////////////////////////////////////////////////////////////
