@@ -296,7 +296,9 @@ fun havemark[c:Course, m:Mark] : set Student {
 //  consisting of all course/mark pairs recorded for s.
 //
 
-fun scores
+fun scores[s:Student] : Course -> Mark {
+    { c:Course, m:Mark | m in s.(c.result) }
+}
 
                                                                     
 //  A function which takes course c as input; outputs the set of tutors 
