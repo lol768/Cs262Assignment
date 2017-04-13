@@ -89,6 +89,7 @@ pred showadd [b,b':Book, n:Name, a:Addr] {
 //
 
 pred assessedTwelve [n: Name, b: Book, b': Book] {
+    // TODO: revisit re b' == b || b' != b
     b'.addr = b.addr - (n -> n.(b.addr))
 }
 
