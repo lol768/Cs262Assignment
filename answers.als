@@ -220,8 +220,13 @@ run {all c:Course | inv[c] && atLeastOneStudentHasAMark[c]} for 3 but exactly 1 
 //  Provide the nondeterministic version of addReg. (Here, the name of the 
 //  predicate only has been given - you'll need to write everything else.)
 //  
-pred addReg
 
+pred addReg[c,c':Course,s:Student] {
+    s !in c.reg
+    c'.reg = c.reg + s // add student to set of registered students
+    some s.(c'.alloc) // we need *a* tutor, but don't care who
+    c'.result = c.result // this can safetly stay the same
+}
 
 //
 /////////////////////////////////////////////////////////////////////////////////
