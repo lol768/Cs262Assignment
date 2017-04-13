@@ -199,6 +199,12 @@ pred invb[c:Course] {
 //  all the invariant properties and in which at least one student has a mark.
 //
 
+pred atLeastOneStudentHasAMark[c:Course] {
+    // We need at least one item in the result field :)
+    some c.result
+}
+
+run {all c:Course | inv[c] && atLeastOneStudentHasAMark[c]} for 3 but exactly 1 Course
 
 //
 /////////////////////////////////////////////////////////////////////////////////
