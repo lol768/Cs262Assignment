@@ -36,7 +36,7 @@ sig Book {addr: Name -> lone Addr}
 //  a) two books, both non-empty and which have different contents 
 //     (that is, the mappings in their addr components are different) 
 
-pred assessedFiveA [] {
+pred assessedFiveA[] {
     some b1:Book | some b2:Book |
       b1 != b2 && #{b1.addr} > 0 && #{b2.addr} > 0 &&
       b1.addr != b2.addr
@@ -46,7 +46,7 @@ pred assessedFiveA [] {
 //  b) instances which could have any amount of books (depending on 
 //     the run statement) but all books are non-empty.   
  
-pred assessedFiveB [] {
+pred assessedFiveB[] {
     all b:Book | some b.addr
 }         
 
@@ -66,7 +66,7 @@ pred assessedFiveB [] {
 //   to the address book, but the set of addresses used doesn't change. 
 // 
 
-pred showadd [b,b':Book, n:Name, a:Addr] {
+pred showadd[b,b':Book, n:Name, a:Addr] {
     add[b,b',n,a]
     b != b'
     Name.(b.addr) = Name.(b'.addr)
@@ -88,7 +88,7 @@ pred showadd [b,b':Book, n:Name, a:Addr] {
 //  Write a pred to define del without an input address.
 //
 
-pred assessedTwelve [n: Name, b: Book, b': Book] {
+pred assessedTwelve[n: Name, b: Book, b': Book] {
     // TODO: revisit re b' == b || b' != b
     b'.addr = b.addr - (n -> n.(b.addr))
 }
