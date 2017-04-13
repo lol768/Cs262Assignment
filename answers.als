@@ -264,8 +264,14 @@ pred recordMark[c,c':Course, s:Student, m:Mark] {
 //  ----------
 //  Write the delReg operation.
 //
-pred delReg
 
+pred delReg[c,c':Course, s:Student] {
+    (c.reg & s) != none // student reg'd
+    (c.result)[s] = none // student has no mark already
+    c'.reg = c.reg - s
+    c'.alloc = c'.reg <: c.alloc // fix up tutors
+    c'.result = c.result
+}
 
 //
 ////////////////////////////////////////////////////////////////////////////////
