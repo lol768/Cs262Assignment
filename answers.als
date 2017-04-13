@@ -288,8 +288,9 @@ pred delReg[c,c':Course, s:Student] {
 //  all students who've scored m on course c.  
 //
 
-fun havemark 
-
+fun havemark[c:Course, m:Mark] : set Student {
+    (c.result).m
+}
                                                                   
 //  A function which takes student s as input; outputs the binary relation 
 //  consisting of all course/mark pairs recorded for s.
