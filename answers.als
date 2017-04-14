@@ -248,7 +248,7 @@ pred recordMark[c,c':Course, s:Student, m:Mark] {
     //     we're adding a mark entry: "input [...] a mark"
     (c.result)[s] = none // student has no mark already
     c'.reg = c.reg // students registered shouldn't change
-
+    c'.alloc = c.alloc // tutor allocation shouldn't change
     c'.result = c.result + s -> m // new entry for this result is union'd
 }
 

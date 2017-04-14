@@ -53,6 +53,7 @@ pred recordMark[c,c':Course, s:Student, m:Mark] {
     (c.reg & s) != none // student has to be reg'd
     (c.result)[s] = none // student has no mark already
     c'.reg = c.reg
+    c'.alloc = c.alloc // this shouldn't change!
     c'.result = c.result + s -> m
 }
 
