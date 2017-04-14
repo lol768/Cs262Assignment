@@ -66,11 +66,14 @@ pred delReg[c,c':Course, s:Student] {
 }
 
 
-
-
 fact traces {
     init[first[]]
-    all c: Course - last[] | let c' = next[c] | (one s:Student | addReg[c,c',s])
+    // iff not gives us xor-like functionality - we use this to enforce
+    // only one operation happens between the old and new Course items
+    all c: Course - last[] | let c' = next[c] | {
+        (one s:Student | addReg[c,c',s] iff not delReg[c,c',s]) iff not
+        (one s:Student, m:Mark | recordMark[c,c',s,m])
+    }
 }
 
 run {} for 3 but 3 Course, 2 Tutor

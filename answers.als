@@ -370,6 +370,17 @@ pred nonDetInit[c:Course] {
 //  ----------
 //  Write a fact statement, traces, to describe the traces of the system
 
+// NB: Using the deterministic init and non-deterministic addReg
+
+fact traces {
+    init[first[]]
+    // iff not gives us xor-like functionality - we use this to enforce
+    // only one operation happens between the old and new Course items
+    all c: Course - last[] | let c' = next[c] | {
+        (one s:Student | addReg[c,c',s] iff not delReg[c,c',s]) iff not
+        (one s:Student, m:Mark | recordMark[c,c',s,m])
+    }
+}
 
 //
 ////////////////////////////////////////////////////////////////////////////////
