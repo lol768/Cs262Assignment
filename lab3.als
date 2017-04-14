@@ -1,26 +1,75 @@
-sig SYM, VAL {}
-sig SymTab {
-    table: SYM -> lone VAL,
-    reserved: set SYM
-} { #(reserved & table.VAL) = 0 }
-
-pred add[s,s':SymTab, sym:SYM,val:VAL]  {
-    sym !in s.table.VAL
-    sym !in s.reserved
-    s'.table = s.table + sym -> val
-    s'.reserved = s.reserved
+module studentMarks
+open util/ordering [Course]
+sig Student, Tutor, Mark {}
+sig Course {
+    reg : set Student,
+    alloc : Student -> Tutor,
+    result : Student -> Mark
 }
 
-pred del[s,s':SymTab, sym:SYM] {
-    sym in s.table.VAL
-    s'.table = s.table - sym -> VAL
-    s'.reserved = s.reserved
+pred inv[c:Course] {
+    inva[c] && invb[c]
 }
 
-// previously addres
-pred addReserved[s,s':SymTab, sym:SYM] {
-    sym !in s.table.VAL
-    sym !in s.reserved
-    s'.table = s.table
-    s'.reserved = s.reserved + sym
+pred inva[c:Course] {
+    // (1) all registered students have tutors
+    all s:(c.reg) | s.(c.alloc) != none
+
+    // (2) every student with a tutor is reg'd
+    all s:((c.alloc).Tutor) | c.reg & s != none
+
+    // (3) no student can have > 1 tutor for a course
+    no s:(c.reg) | #(s.(c.alloc)) > 1
 }
+
+pred invb[c:Course] {
+    // (1) Only registered students can have a result
+    c.reg <: c.result = c.result
+
+    // (2) No student can have more than one mark for a course
+    all s:(c.reg) | lone c.result[s]
+}
+
+pred init[c:Course] {
+    // suitable initial state where course is empty
+    no c.reg
+    no c.alloc
+    no c.result
+}
+
+pred nonDetInit[c:Course] {
+    // any course is fine if it complies with inv
+    inv[c]
+}
+
+pred addReg[c,c':Course,s:Student] {
+    s !in c.reg
+    c'.reg = c.reg + s
+    one t:s.(c'.alloc) | c'.alloc = c.alloc + s -> t // we need *a* tutor, but don't care who
+    c'.result = c.result
+}
+
+pred recordMark[c,c':Course, s:Student, m:Mark] {
+    (c.reg & s) != none // student has to be reg'd
+    (c.result)[s] = none // student has no mark already
+    c'.reg = c.reg
+    c'.result = c.result + s -> m
+}
+
+pred delReg[c,c':Course, s:Student] {
+    (c.reg & s) != none // student reg'd
+    (c.result)[s] = none // student has no mark already
+    c'.reg = c.reg - s
+    c'.alloc = c'.reg <: c.alloc // fix up tutors
+    c'.result = c.result
+}
+
+
+
+
+fact traces {
+    init[first[]]
+    all c: Course - last[] | let c' = next[c] | (one s:Student | addReg[c,c',s])
+}
+
+run {} for 3 but 3 Course, 2 Tutor

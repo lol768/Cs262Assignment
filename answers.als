@@ -224,7 +224,7 @@ run {all c:Course | inv[c] && atLeastOneStudentHasAMark[c]} for 3 but exactly 1 
 pred addReg[c,c':Course,s:Student] {
     s !in c.reg
     c'.reg = c.reg + s // add student to set of registered students
-    some s.(c'.alloc) // we need *a* tutor, but don't care who
+    one t:s.(c'.alloc) | c'.alloc = c.alloc + s -> t // we need *a* tutor, but don't care who
     c'.result = c.result // this can safetly stay the same
 }
 
