@@ -343,10 +343,20 @@ fun findtutors[c:Course] : set Tutor {
 //  Write:
 //  - a predicate, init, to describe the initial states of the system
 
+pred init[c:Course] {
+    // suitable initial state where course is empty
+    no c.reg
+    no c.alloc
+    no c.result
+}
 
 //  - an alternative nondeterministic initialisation which would allow a trace to 
 //    start from any state
 
+pred nonDetInit[c:Course] {
+    // any course is fine if it complies with inv
+    inv[c]
+}
 
 //
 ////////////////////////////////////////////////////////////////////////////////
