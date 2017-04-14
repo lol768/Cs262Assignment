@@ -76,6 +76,12 @@ fact traces {
     }
 }
 
+assert studentCannotLoseScore {
+    all c:Course | all s:((c.result).Mark) | all c':nexts[c] | some s.(c'.result)
+}
+
+check studentCannotLoseScore for 5
+
 fun scores[s:Student] : Course -> Mark {
     {c:Course, m:Mark | m in s.(c.result)}
 }
@@ -84,4 +90,4 @@ pred atLeastOneScoreExists[] {
     scores[Student][Course] != none
 }
 
-run {atLeastOneScoreExists} for 3 but 3 Course
+//run {atLeastOneScoreExists} for 3 but 3 Course

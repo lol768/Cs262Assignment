@@ -416,6 +416,12 @@ run {atLeastOneScoreExists} for 3 but 3 Course
 //  check statement to try this out.
 
 
+assert studentCannotLoseScore {
+    all c:Course | all s:((c.result).Mark) | all c':nexts[c] | some s.(c'.result)
+}
+
+check studentCannotLoseScore for 5
+
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -428,6 +434,17 @@ run {atLeastOneScoreExists} for 3 but 3 Course
 //  ----------
 //  Write modified signatures for the SymTab specification to model time
 
+open util/ordering[Time] as TO
+
+sig SYM, VAL, Time {}
+
+one sig SymTab {
+    table: SYM -> VAL -> Time,
+    reserved: Time -> set SYM
+} {
+    all t:Time | #(reserved[t] & (table.t).VAL) = 0
+    all s:SYM, t:Time | lone s.table.t
+}
 
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -441,6 +458,46 @@ run {atLeastOneScoreExists} for 3 but 3 Course
 //  ----------
 //  Write modified add and delete operations for the approach with time.
 
+// add symbol->value pair
+pred add[s:SymTab, sym:SYM, val:VAL, t,t':Time] {
+    sym !in t.(s.reserved)
+    sym !in s.table.t.VAL
+    s.table.t' = s.table.t + sym -> val
+    t.(s.reserved) = t'.(s.reserved)
+}
+
+// delete symbol
+pred del[s:SymTab, sym:SYM, t,t':Time] {
+    sym in s.table.t.VAL
+    s.table.t' = s.table.t - sym -> VAL
+    t.(s.reserved) = t'.(s.reserved)
+}
+
+
+// add reserved symbol
+pred addres[s:SymTab, sym:SYM, t,t':Time] {
+    sym !in t.(s.reserved)
+    sym !in s.table.t.VAL
+    s.table.t = s.table.t'
+    t'.(s.reserved) = t.(s.reserved) + sym
+}
+
+// We can enforce exactly one of these operations is executed for each
+// new time step:
+
+// NB: commented out here because the question only asked for the operations.
+
+//pred init[t:Time] {
+//    one s:SymTab | { 
+//        t.(s.reserved) = none
+//        s.table.t.VAL = none
+//    }
+//}
+
+//fact traces {
+//    init[TO/first[]]
+//    all t:Time - TO/last[] | let t' = TO/next[t] | one s:SymTab, sym:SYM | del[s,sym,t,t'] iff not addres[s,sym,t,t'] iff not (one v:VAL | add[s,sym,v,t,t'])
+//}
 
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -456,10 +513,16 @@ run {atLeastOneScoreExists} for 3 but 3 Course
 //  - a function which, for a given SymTab, outputs all times at which its 
 //  - reserved set is empty
 
+fun reservedSetEmptyTimes[s:SymTab] : set Time {
+    { t:Time | t.(s.reserved) = none }
+}
 
 //  - a pred which is true for a SymTab, a symbol and a time if the symbol 
 //  - is in the SymTab's table at that time
 
+pred symbolInTableAtTime[s:SymTab, sym:SYM, t:Time] {
+    sym in s.table.t.VAL
+}
 
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -473,7 +536,7 @@ run {atLeastOneScoreExists} for 3 but 3 Course
 //  write your solution here.
 
 // I've seen a similar problem with "cannibals and missionaries"
-// but not solved anything like these with Alloy.
+// but not solved anything it with Alloy before.
 
 // After running the model, I get the following solution:
 // (1) Mon1 Mon2 mun1 mun2 | Boat Mon3 mun3
