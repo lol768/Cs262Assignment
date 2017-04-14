@@ -81,7 +81,7 @@ fun scores[s:Student] : Course -> Mark {
 }
 
 pred atLeastOneScoreExists[] {
-    scores[Student] != none
+    scores[Student][Course] != none
 }
 
-run {atLeastOneScoreExists} for 3 but 3 Course, 2 Tutor
+run {atLeastOneScoreExists} for 3 but 3 Course
