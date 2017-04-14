@@ -76,4 +76,12 @@ fact traces {
     }
 }
 
-run {} for 3 but 3 Course, 2 Tutor
+fun scores[s:Student] : Course -> Mark {
+    {c:Course, m:Mark | m in s.(c.result)}
+}
+
+pred atLeastOneScoreExists[] {
+    scores[Student] != none
+}
+
+run {atLeastOneScoreExists} for 3 but 3 Course, 2 Tutor

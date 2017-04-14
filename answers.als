@@ -395,6 +395,11 @@ fact traces {
 //  Write a pred statement and a run statement which  will display a trace in which 
 //  some marks are obtained at some point.
 
+pred atLeastOneScoreExists[] {
+    scores[Student][Course] != none // using scores function defined above
+}
+
+run {atLeastOneScoreExists} for 3 but 3 Course
 
 //
 ////////////////////////////////////////////////////////////////////////////////
