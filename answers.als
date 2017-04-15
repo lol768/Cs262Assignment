@@ -69,8 +69,8 @@ pred assessedFiveB[] {
 pred showadd[b,b':Book, n:Name, a:Addr] {
     add[b,b',n,a]
     b != b'
-    Name.(b.addr) = Name.(b'.addr)
-    !n in b.addr.Addr
+    Name.(b.addr) = Name.(b'.addr) // set of all addresses unchanged
+    !n in b.addr.Addr // new name added
 }
 
 //
@@ -88,8 +88,9 @@ pred showadd[b,b':Book, n:Name, a:Addr] {
 //  Write a pred to define del without an input address.
 //
 
-pred assessedTwelve[n: Name, b: Book, b': Book] {
-    // TODO: revisit re b' == b || b' != b
+pred assessedTwelve [n: Name, b: Book, b': Book] {
+    // Name must be present in b's addr before
+    n.(b.addr) != none
     b'.addr = b.addr - (n -> n.(b.addr))
 }
 
@@ -166,6 +167,19 @@ sig Course {
 
 pred inv [c:Course] { 
     inva[c] && invb[c]
+}
+
+// I've added inva here because it's necessary for inv to work:
+
+pred inva[c:Course] {
+    // (1) all registered students have tutors
+    all s:(c.reg) | s.(c.alloc) != none
+
+    // (2) every student with a tutor is reg'd
+    all s:((c.alloc).Tutor) | c.reg & s != none
+
+    // (3) no student can have > 1 tutor for a course
+    no s:(c.reg) | #(s.(c.alloc)) > 1
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +385,8 @@ pred nonDetInit[c:Course] {
 //  Write a fact statement, traces, to describe the traces of the system
 
 // NB: Using the deterministic init and non-deterministic addReg
+
+// open util/ordering [Course] is a pre-requisite. I haven't aliased it here.
 
 fact traces {
     init[first[]]

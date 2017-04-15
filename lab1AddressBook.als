@@ -64,8 +64,18 @@ pred isSameStateAfterDel [n:Name, a:Addr, b:Book, b':Book] {
 }
 
 pred assessedTwelve [n: Name, b: Book, b': Book] {
+    // Name must be present in b's addr before
+    n.(b.addr) != none
     b'.addr = b.addr - (n -> n.(b.addr))
 }
+
+pred showadd[b,b':Book, n:Name, a:Addr] {
+    add[b,b',n,a]
+    Name.(b.addr) = Name.(b'.addr)
+    !n in b.addr.Addr
+}
+
+run showadd for 2
 
 //run assessedTwelve for 2 but exactly 2 Book
 
@@ -74,4 +84,4 @@ assert DelUndoesAdd
 (add[b,b',n,a] && del[b',b'',n,a])
 => b.addr = b''.addr
 }
-check DelUndoesAdd for 3
+//check DelUndoesAdd for 3
